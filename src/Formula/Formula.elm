@@ -1,7 +1,13 @@
-module Formula.Formula exposing (Element(..), StyledText(..), Text(..), Type, URL, view, viewElement, viewStyledText, viewText)
+module Formula.Formula exposing (Element(..), Styled(..), Text(..), Type, URL, view, viewElement, viewStyled, viewText)
 
 import Html exposing (..)
 import Html.Attributes exposing (href)
+
+
+type Styled
+    = RawStyle String
+    | Bold String
+    | Italic String
 
 
 type alias URL =
@@ -9,20 +15,14 @@ type alias URL =
 
 
 type Text
-    = Raw String
-    | Link URL String
-
-
-type StyledText
-    = RawStyle Text
-    | Bold Text
-    | Italic Text
+    = Raw Styled
+    | Link URL Styled
 
 
 type Element
-    = P (List StyledText)
-    | Listing (List (List StyledText))
-    | Decimal (List (List StyledText))
+    = P (List Text)
+    | Listing (List (List Text))
+    | Decimal (List (List Text))
     | Headers Int Text
 
 
@@ -30,39 +30,39 @@ type alias Type =
     List Element
 
 
+viewStyled : Styled -> Html msg
+viewStyled styled =
+    case styled of
+        RawStyle txt ->
+            text txt
+
+        Bold txt ->
+            strong [] [ text txt ]
+
+        Italic txt ->
+            em [] [ text txt ]
+
+
 viewText : Text -> Html msg
 viewText t =
     case t of
         Raw txt ->
-            text txt
+            viewStyled txt
 
         Link url txt ->
-            a [ href url ] [ text txt ]
+            a [ href url ] [ viewStyled txt ]
 
 
-viewStyledText : StyledText -> Html msg
-viewStyledText styled =
-    case styled of
-        RawStyle txt ->
-            viewText txt
-
-        Bold txt ->
-            strong [] [ viewText txt ]
-
-        Italic txt ->
-            em [] [ viewText txt ]
-
-
-viewList : (List (Html.Attribute msg) -> List (Html msg) -> b) -> List (List StyledText) -> b
+viewList : (List (Html.Attribute msg) -> List (Html msg) -> b) -> List (List Text) -> b
 viewList parent constructs =
-    List.map (\c -> li [] <| List.map viewStyledText c) constructs |> parent []
+    List.map (\c -> li [] <| List.map viewText c) constructs |> parent []
 
 
 viewElement : Element -> Html msg
 viewElement elem =
     case elem of
-        P stxts ->
-            List.map viewStyledText stxts |> p []
+        P txts ->
+            List.map viewText txts |> p []
 
         Listing constructs ->
             viewList ul constructs
