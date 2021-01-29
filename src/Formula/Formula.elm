@@ -1,4 +1,4 @@
-module Formula exposing (Element(..), StyledText(..), Text(..), Type, URL, view, viewElement, viewStyledText, viewText)
+module Formula.Formula exposing (Element(..), StyledText(..), Text(..), Type, URL, view, viewElement, viewStyledText, viewText)
 
 import Html exposing (..)
 import Html.Attributes exposing (href)

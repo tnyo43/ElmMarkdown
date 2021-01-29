@@ -5,22 +5,12 @@ import Test exposing (..)
 
 
 isEquals : String -> a -> a -> Test
-isEquals str x y =
+isEquals str expected actual =
     test str <|
-        \_ -> Expect.equal x y
-
-
-isEqualsF : String -> (a -> b) -> a -> b -> Test
-isEqualsF str f x y =
-    isEquals str (f x) y
+        \_ -> Expect.equal expected actual
 
 
 isNotEquals : String -> a -> a -> Test
-isNotEquals str x y =
+isNotEquals str notExpected actual =
     test str <|
-        \_ -> Expect.notEqual x y
-
-
-isNotEqualsF : String -> (a -> b) -> a -> b -> Test
-isNotEqualsF str f x y =
-    isNotEquals str (f x) y
+        \_ -> Expect.notEqual notExpected actual
